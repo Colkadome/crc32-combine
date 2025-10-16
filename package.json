@@ -18,36 +18,36 @@
     "url": "git+https://github.com/Colkadome/crc32-combine.git"
   },
   "files": [
-    "dist",
-    "LICENSE"
+    "LICENSE",
+    "README.md",
+    "dist"
   ],
   "license": "MIT",
   "author": {
     "name": "Colkadome",
     "url": "https://github.com/Colkadome"
   },
-  "type": "module",
+  "contributors": [],
   "sideEffects": false,
-  "types": "./cjs/index.d.ts",
-  "main": "./cjs/index.js",
-  "module": "./esm/index.js",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
   "exports": {
     ".": {
       "import": {
-        "types": "./esm/index.d.ts",
-        "default": "./esm/index.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/esm/index.mjs"
       },
       "require": {
-        "types": "./cjs/index.d.ts",
-        "default": "./cjs/index.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/cjs/index.js"
       }
-    },
-    "./package.json": "./package.json"
+    }
   },
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
-    "build:cjs": "tsc --module commonjs --outDir cjs/ && echo '{\"type\": \"commonjs\"}' > cjs/package.json",
-    "build:esm": "tsc --module es2022 --outDir esm/ && echo '{\"type\": \"module\"}' > esm/package.json",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs/",
+    "build:esm": "tsc --module es2022 --declaration --target esnext --outDir dist/esm/ && mv dist/esm/index.js dist/esm/index.mjs && mv dist/esm/index.d.ts dist/index.d.ts",
     "test": "uvu -r esm test"
   },
   "engines": {

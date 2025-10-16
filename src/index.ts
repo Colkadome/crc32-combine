@@ -5,7 +5,7 @@
  * @see {@link https://github.com/Colkadome/crc32-combine/blob/main/LICENSE}
  */
 
-// Types.
+/** @public */
 export interface Crc32Chunk {
   crc32: number;
   len: number;
@@ -45,10 +45,9 @@ function gf2MatrixSquare(square: Uint32Array, mat: Uint32Array) {
  * @param {number} crc1 - Existing checksum.
  * @param {number} crc2 - Incoming checksum.
  * @param {number} len2 - Incoming length.
- * 
  * @returns {number} The combined crc32 checksum.
  */
-function crc32Combine(crc1: number, crc2: number, len2: number): number {
+function crc32CombineSingle(crc1: number, crc2: number, len2: number): number {
 
   if (len2 <= 0) {
     return crc1;
@@ -101,7 +100,8 @@ function checkChunks(chunks: Crc32Chunk[]) {
     if (typeof chunks[i].crc32 !== 'number') {
       throw new Error(`Chunk ${i}: invalid crc32 property`);
     }
-    if (typeof chunks[i].len !== 'number') {
+    // NOTE: Length is optional for the first chunk.
+    if (i > 0 && typeof chunks[i].len !== 'number') {
       throw new Error(`Chunk ${i}: invalid length property`);
     }
   }
@@ -111,10 +111,10 @@ function checkChunks(chunks: Crc32Chunk[]) {
  * Function to combine several crc32 checksums into one.
  * 
  * @param {Crc32Chunk[]} chunks
- * 
  * @returns {number} The combined crc32 checksum.
+ * @public
  */
-function combineCrc32Checksums(chunks: Crc32Chunk[]): number {
+function crc32Combine(chunks: Crc32Chunk[]): number {
 
   // Check args.
   checkChunks(chunks);
@@ -122,11 +122,12 @@ function combineCrc32Checksums(chunks: Crc32Chunk[]): number {
   // Get checksums, starting from first chunk.
   let result = chunks[0].crc32;
   for (let i = 1; i < chunks.length; i++) {
-    result = crc32Combine(result, chunks[i].crc32, chunks[i].len);
+    result = crc32CombineSingle(result, chunks[i].crc32, chunks[i].len);
   }
   return result;
 
 }
 
 // Exports.
-export default combineCrc32Checksums;
+export default crc32Combine;
+export { crc32Combine };
